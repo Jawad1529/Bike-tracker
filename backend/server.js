@@ -11,6 +11,16 @@ mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.log('MongoDB connection error:', err));
 
+// Drop old username index that conflicts with the schema
+mongoose.connection.once('open', async () => {
+    try {
+        await mongoose.connection.collection('users').dropIndex('username_1');
+        console.log('Dropped old username index');
+    } catch (e) {
+        // Index doesn't exist, that's fine
+    }
+});
+
 const turnRoutes = require('./routes/turns');
 const authRoutes = require('./routes/auth');
 

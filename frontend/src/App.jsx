@@ -14,7 +14,7 @@ import Auth from './Auth';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const API = 'http://localhost:5000/api/turns';
+const API = 'https://bike-tracker-production.up.railway.app/api/turns';
 
 function App() {
     const [data, setData] = useState(null);

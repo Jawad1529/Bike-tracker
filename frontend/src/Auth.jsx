@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const API = 'http://localhost:5000/api/auth';
+const API = 'https://bike-tracker-production.up.railway.app/api/auth';
 
 function Auth({ onLogin }) {
     const [isLogin, setIsLogin] = useState(true);

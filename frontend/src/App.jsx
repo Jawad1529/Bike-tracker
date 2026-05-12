@@ -14,7 +14,7 @@ import Auth from './Auth';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const API = 'https://bike-tracker-production.up.railway.app/api/turns';
+const API = `${import.meta.env.VITE_API_URL}/api/turns`;
 
 function App() {
     const [data, setData] = useState(null);

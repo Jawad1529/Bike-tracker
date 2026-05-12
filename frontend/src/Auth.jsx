@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const API = 'https://bike-tracker-production.up.railway.app/api/auth';
+const API = `${import.meta.env.VITE_API_URL}/api/auth`;
 
 function Auth({ onLogin }) {
     const [isLogin, setIsLogin] = useState(true);

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Bar } from 'react-chartjs-2';
-import toast, { Toaster } from 'react-hot-toast';
+import { io } from 'socket.io-client';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -16,11 +16,11 @@ import Auth from './Auth';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const API = `${import.meta.env.VITE_API_URL}/api/turns`;
+const socket = io(import.meta.env.VITE_API_URL);
 
 function App() {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [actionLoading, setActionLoading] = useState(false);
     const [dragIndex, setDragIndex] = useState(null);
     const [dragOverIndex, setDragOverIndex] = useState(null);
     const [user, setUser] = useState(null);
@@ -30,7 +30,17 @@ function App() {
         const savedToken = localStorage.getItem('token');
         const savedUser = localStorage.getItem('user');
         if (savedToken && savedUser) {
+            setToken(savedToken);
+            setUser(JSON.parse(savedUser));
         }
+    }, []);
+
+    // Listen for real-time updates
+    useEffect(() => {
+        socket.on('turnUpdated', (updatedData) => {
+            setData(updatedData);
+        });
+        return () => socket.off('turnUpdated');
     }, []);
 
     const handleLogin = (userData, tokenData) => {

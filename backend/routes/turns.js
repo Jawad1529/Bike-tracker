@@ -45,6 +45,7 @@ router.post('/complete', authenticate, adminOnly, async (req, res) => {
         turn.history.push({ name: currentMember.name, status: 'completed' });
         turn.currentIndex = (turn.currentIndex + 1) % turn.members.length;
         await turn.save();
+        req.app.get('io').emit('turnUpdated', turn);
         res.json(turn);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -61,6 +62,7 @@ router.post('/absent', authenticate, adminOnly, async (req, res) => {
         turn.history.push({ name: currentMember.name, status: 'absent' });
         turn.currentIndex = (turn.currentIndex + 1) % turn.members.length;
         await turn.save();
+        req.app.get('io').emit('turnUpdated', turn);
         res.json(turn);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -82,6 +84,7 @@ router.post('/miss', authenticate, adminOnly, async (req, res) => {
         const email = MEMBER_EMAILS[currentMember.name];
         sendMissEmail(currentMember.name, email);
 
+        req.app.get('io').emit('turnUpdated', turn);
         res.json(turn);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -101,6 +104,7 @@ router.post('/set/:index', authenticate, adminOnly, async (req, res) => {
 
         turn.currentIndex = index;
         await turn.save();
+        req.app.get('io').emit('turnUpdated', turn);
         res.json(turn);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -119,9 +123,9 @@ router.post('/reorder', authenticate, adminOnly, async (req, res) => {
         }
 
         turn.members = members.map((name, i) => ({ name, order: i }));
-        // Reset currentIndex to 0 after reorder to avoid confusion
         turn.currentIndex = 0;
         await turn.save();
+        req.app.get('io').emit('turnUpdated', turn);
         res.json(turn);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -137,6 +141,7 @@ router.post('/reset', authenticate, adminOnly, async (req, res) => {
         turn.currentIndex = 0;
         turn.history = [];
         await turn.save();
+        req.app.get('io').emit('turnUpdated', turn);
         res.json(turn);
     } catch (err) {
         res.status(500).json({ error: err.message });

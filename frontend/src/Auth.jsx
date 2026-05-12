@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import toast, { Toaster } from 'react-hot-toast';
 
 const API = `${import.meta.env.VITE_API_URL}/api/auth`;
 
@@ -20,14 +21,18 @@ function Auth({ onLogin }) {
             const res = await axios.post(`${API}${endpoint}`, payload);
             localStorage.setItem('token', res.data.token);
             localStorage.setItem('user', JSON.stringify(res.data.user));
+            toast.success(isLogin ? 'Logged in successfully!' : 'Account created!');
             onLogin(res.data.user, res.data.token);
         } catch (err) {
-            setError(err.response?.data?.error || 'Something went wrong');
+            const msg = err.response?.data?.error || 'Something went wrong';
+            setError(msg);
+            toast.error(msg);
         }
     };
 
     return (
         <div className="auth-container">
+            <Toaster position="top-right" toastOptions={{ style: { background: '#1a1a2e', color: '#fff', border: '1px solid #333' } }} />
             <div className="auth-card">
                 <h1>🏍️ Bike Turn Tracker</h1>
                 <h2>{isLogin ? 'Login' : 'Sign Up'}</h2>

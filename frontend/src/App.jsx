@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Bar } from 'react-chartjs-2';
 import { io } from 'socket.io-client';
+import toast, { Toaster } from 'react-hot-toast';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -51,6 +52,7 @@ function App() {
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        toast.success('Logged out');
         setUser(null);
         setToken(null);
     };
@@ -76,16 +78,19 @@ function App() {
 
     const markDone = async () => {
         await axios.post(`${API}/complete`, {}, authHeaders());
+        toast.success('Turn completed! ✅');
         fetchData();
     };
 
     const markAbsent = async () => {
         await axios.post(`${API}/absent`, {}, authHeaders());
+        toast('Marked as absent 🚫', { icon: '🚫' });
         fetchData();
     };
 
     const markMiss = async () => {
         await axios.post(`${API}/miss`, {}, authHeaders());
+        toast.error('Marked as missed ❌');
         fetchData();
     };
 
@@ -197,6 +202,7 @@ function App() {
 
     return (
         <div className="app">
+            <Toaster position="top-right" toastOptions={{ style: { background: '#1a1a2e', color: '#fff', border: '1px solid #333' } }} />
             <div className="top-bar">
                 <span>👤 {user.name} ({user.role})</span>
                 <button className="btn btn-logout" onClick={handleLogout}>Logout</button>
